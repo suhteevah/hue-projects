@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.turbo/
+.svelte-kit/
+*.db
+*.db-journal
+.env
+.env.local
+*.pem
+coverage/
+.cache/
+apps/api/data/matter-storage/

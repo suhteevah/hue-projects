@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  /* Dark surface palette */
+  --color-surface-50: #f8fafc;
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: #e2e8f0;
+  --color-surface-300: #cbd5e1;
+  --color-surface-400: #94a3b8;
+  --color-surface-500: #64748b;
+  --color-surface-600: #475569;
+  --color-surface-700: #334155;
+  --color-surface-800: #1e293b;
+  --color-surface-900: #0f172a;
+  --color-surface-950: #020617;
+
+  /* Accent blue */
+  --color-accent: #3b82f6;
+  --color-accent-light: #60a5fa;
+  --color-accent-dark: #2563eb;
+
+  /* Semantic device colors */
+  --color-device-on: #22c55e;
+  --color-device-off: #64748b;
+  --color-device-unreachable: #ef4444;
+
+  /* Warm/cool temperature colors */
+  --color-temp-warm: #f59e0b;
+  --color-temp-cool: #93c5fd;
+}
+
+/* Safe area insets for iOS standalone */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Smooth slider thumb for touch */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  border: 3px solid var(--color-surface-900);
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-surface-700);
+}

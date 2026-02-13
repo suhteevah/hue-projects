@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(pnpm --version:*)",
+      "Bash(npx:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm install)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(pnpm config set:*)",
+      "Bash(CI=true pnpm install:*)",
+      "Bash(pnpm --filter @smart-home/shared-types run build)",
+      "Bash(pnpm --filter @smart-home/api run build:*)",
+      "Bash(pnpm install:*)"
+    ]
+  }
+}

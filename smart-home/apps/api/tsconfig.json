@@ -1,0 +1,14 @@
+{
+  "extends": "@smart-home/tsconfig/nestjs.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src"]
+}

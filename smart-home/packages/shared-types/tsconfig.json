@@ -1,0 +1,10 @@
+{
+  "extends": "@smart-home/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "module": "es2022",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src"]
+}

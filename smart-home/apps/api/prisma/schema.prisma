@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("user")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model HueBridge {
+  id             String   @id @default(uuid())
+  name           String
+  ipAddress      String
+  bridgeId       String   @unique
+  applicationKey String
+  clientKey      String?
+  modelId        String?
+  apiVersion     String?
+  discoveredAt   DateTime @default(now())
+  lastSeen       DateTime @default(now())
+}
+
+model Device {
+  id           String   @id @default(uuid())
+  externalId   String   @unique
+  name         String
+  type         String
+  source       String
+  bridgeId     String?
+  roomId       String?
+  capabilities String   @default("{}")
+  lastState    String   @default("{}")
+  online       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  room               Room?               @relation(fields: [roomId], references: [id])
+  sceneActions       SceneAction[]
+  automationTriggers AutomationTrigger[]
+  automationActions  AutomationAction[]
+  schedules          Schedule[]
+  sensorReadings     SensorReading[]
+}
+
+model Room {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  icon      String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  devices Device[]
+  scenes  Scene[]
+}
+
+model Scene {
+  id         String   @id @default(uuid())
+  name       String
+  icon       String?
+  roomId     String?
+  externalId String?  @unique
+  source     String   @default("local")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  room    Room?         @relation(fields: [roomId], references: [id])
+  actions SceneAction[]
+}
+
+model SceneAction {
+  id       String @id @default(uuid())
+  sceneId  String
+  deviceId String
+  state    String
+  order    Int    @default(0)
+
+  scene  Scene  @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  device Device @relation(fields: [deviceId], references: [id])
+
+  @@unique([sceneId, deviceId])
+}
+
+model Automation {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  triggers AutomationTrigger[]
+  actions  AutomationAction[]
+}
+
+model AutomationTrigger {
+  id           String  @id @default(uuid())
+  automationId String
+  type         String
+  deviceId     String?
+  condition    String
+
+  automation Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  device     Device?    @relation(fields: [deviceId], references: [id])
+}
+
+model AutomationAction {
+  id           String  @id @default(uuid())
+  automationId String
+  type         String
+  deviceId     String?
+  sceneId      String?
+  payload      String
+  order        Int     @default(0)
+
+  automation Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  device     Device?    @relation(fields: [deviceId], references: [id])
+}
+
+model Schedule {
+  id         String   @id @default(uuid())
+  name       String
+  deviceId   String?
+  sceneId    String?
+  cron       String
+  action     String
+  enabled    Boolean  @default(true)
+  externalId String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  device Device? @relation(fields: [deviceId], references: [id])
+}
+
+model SensorReading {
+  id        String   @id @default(uuid())
+  deviceId  String
+  type      String
+  value     Float
+  unit      String
+  timestamp DateTime @default(now())
+
+  device Device @relation(fields: [deviceId], references: [id])
+
+  @@index([deviceId, timestamp])
+  @@index([type, timestamp])
+}
+
+model GoogleHomeToken {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model MatterNode {
+  id              String   @id @default(uuid())
+  nodeId          String   @unique
+  name            String
+  vendorId        Int?
+  productId       Int?
+  deviceType      String
+  serialNumber    String?
+  commissioned    Boolean  @default(true)
+  commissionedAt  DateTime @default(now())
+  lastSeen        DateTime @default(now())
+}
+
+model EntertainmentArea {
+  id         String   @id @default(uuid())
+  externalId String   @unique
+  name       String
+  lightCount Int      @default(0)
+  isActive   Boolean  @default(false)
+  metadata   String   @default("{}")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
