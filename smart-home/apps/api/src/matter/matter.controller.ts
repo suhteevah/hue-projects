@@ -10,6 +10,7 @@ import {
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { MatterNodeService } from './matter-node.service';
 import { MatterEventService } from './matter-event.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { IsString, IsNotEmpty } from 'class-validator';
 
 class CommissionDto {
@@ -24,6 +25,7 @@ export class MatterController {
   constructor(
     private readonly matterNodeService: MatterNodeService,
     private readonly matterEventService: MatterEventService,
+    private readonly prisma: PrismaService,
   ) {}
 
   /**
@@ -33,6 +35,54 @@ export class MatterController {
   @Get('nodes')
   async listNodes() {
     return this.matterNodeService.listNodes();
+  }
+
+  /**
+   * GET /api/matter/status
+   * Returns a unified overview: paired Hue bridges with device counts + Matter nodes.
+   */
+  @Get('status')
+  async getStatus() {
+    const [bridges, matterNodes, devices] = await Promise.all([
+      this.prisma.hueBridge.findMany({ orderBy: { lastSeen: 'desc' } }),
+      this.prisma.matterNode.findMany({ orderBy: { commissionedAt: 'desc' } }),
+      this.prisma.device.findMany({ select: { source: true, externalId: true } }),
+    ]);
+
+    const hueDeviceCount = devices.filter((d) => d.source === 'hue').length;
+    const matterDeviceCount = devices.filter((d) => d.source === 'matter').length;
+
+    return {
+      bridges: bridges.map((b) => ({
+        id: b.id,
+        name: b.name,
+        ipAddress: b.ipAddress,
+        bridgeId: b.bridgeId,
+        modelId: b.modelId,
+        apiVersion: b.apiVersion,
+        lastSeen: b.lastSeen.toISOString(),
+        deviceCount: hueDeviceCount,
+      })),
+      matterNodes: matterNodes.map((n) => ({
+        id: n.id,
+        nodeId: n.nodeId,
+        name: n.name,
+        vendorId: n.vendorId,
+        productId: n.productId,
+        deviceType: n.deviceType,
+        serialNumber: n.serialNumber,
+        commissioned: n.commissioned,
+        commissionedAt: n.commissionedAt.toISOString(),
+        lastSeen: n.lastSeen.toISOString(),
+      })),
+      totals: {
+        bridges: bridges.length,
+        matterNodes: matterNodes.length,
+        hueDevices: hueDeviceCount,
+        matterDevices: matterDeviceCount,
+        totalDevices: hueDeviceCount + matterDeviceCount,
+      },
+    };
   }
 
   /**

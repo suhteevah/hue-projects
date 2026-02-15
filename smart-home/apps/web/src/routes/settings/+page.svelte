@@ -48,14 +48,14 @@
     </div>
   </section>
 
-  <!-- Bridge Setup -->
-  <section class="bg-surface-800 rounded-2xl p-5 border border-surface-700">
-    <BridgeSetup />
-  </section>
-
-  <!-- Matter Setup -->
+  <!-- Connected Devices — unified view of bridges + matter nodes -->
   <section class="bg-surface-800 rounded-2xl p-5 border border-surface-700">
     <MatterSetup />
+  </section>
+
+  <!-- Bridge Setup — discover & pair new Hue bridges -->
+  <section class="bg-surface-800 rounded-2xl p-5 border border-surface-700">
+    <BridgeSetup />
   </section>
 
   <!-- Device Sync -->
@@ -73,7 +73,7 @@
       {syncing ? 'Syncing...' : 'Sync All Devices'}
     </button>
     <p class="text-xs text-surface-500 mt-2 text-center">
-      Re-fetch all devices from connected bridges
+      Re-fetch all devices from connected bridges and Matter nodes
     </p>
   </section>
 
