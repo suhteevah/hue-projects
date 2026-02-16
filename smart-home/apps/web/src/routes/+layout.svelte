@@ -16,7 +16,7 @@
   onMount(async () => {
     const authenticated = await auth.checkStatus();
 
-    if (!authenticated && !page.url.pathname.startsWith('/login')) {
+    if (!authenticated && !page.url.pathname.startsWith('/login') && !page.url.pathname.startsWith('/demo')) {
       goto('/login');
     } else if (authenticated) {
       // Load devices and connect SSE
@@ -28,7 +28,8 @@
   });
 
   // Show app shell only when auth check is done
-  const showApp = $derived($authChecked && $isAuthenticated && !page.url.pathname.startsWith('/login'));
+  const isPublicRoute = $derived(page.url.pathname.startsWith('/login') || page.url.pathname.startsWith('/demo'));
+  const showApp = $derived($authChecked && $isAuthenticated && !isPublicRoute);
 </script>
 
 {#if !ready}

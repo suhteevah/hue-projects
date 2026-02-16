@@ -59,7 +59,7 @@
     >
       <span
         class="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform
-          {isOn ? 'translate-x-5.5' : 'translate-x-0.5'}"
+          {isOn ? 'translate-x-[22px]' : 'translate-x-[2px]'}"
       ></span>
     </button>
   </div>
